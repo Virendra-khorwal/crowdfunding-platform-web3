@@ -4,6 +4,7 @@ import { Sepolia } from "@thirdweb-dev/chains";
 
 import { BrowserRouter as Router } from "react-router-dom";
 import { ThirdwebProvider } from "@thirdweb-dev/react";
+import { StateContextProvider } from "./context";
 
 import App from "./App";
 import './index.css';
@@ -19,7 +20,9 @@ root.render(
   <React.StrictMode>
     <ThirdwebProvider activeChain={Sepolia}>
       <Router>
-        <App />
+        <StateContextProvider>
+          <App />
+        </StateContextProvider>
       </Router>
     </ThirdwebProvider>
   </React.StrictMode>
