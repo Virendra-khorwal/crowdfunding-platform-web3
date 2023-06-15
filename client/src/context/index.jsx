@@ -25,14 +25,14 @@ export const StateContextProvider = ({ children }) => {
 
   const publishCampaign = async (form) => {
     try {
-      const data = await createCampaign([
+      const data = await createCampaign({ args:[
         address,
         form.title,
         form.description,
         form.target,
         new Date(form.deadline).getTime(),
         form.image,
-      ]);
+      ]});
 
       console.log("Contract call successful", data);
     } catch (error) {
