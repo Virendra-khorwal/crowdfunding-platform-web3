@@ -9,7 +9,9 @@ import { thirdweb } from "../assets";
 
 const CampaignDetails = () => {
   const { state } = useLocation();
-  const { getDonations, contract, account } = useStateContext();
+  const { getDonations,donate, contract, address } = useStateContext();
+
+  console.log(state);
 
   const [isLoading, setIsLoading] = useState(false);
   const [amount, setAmount] = useState("");
@@ -17,9 +19,23 @@ const CampaignDetails = () => {
 
   const remainingDays = daysLeft(state.deadline);
 
+  const fetchDonators = async () => {
+    const data = await getDonations(state.pId);
+
+    setDonators(data);
+  }
+
+  useEffect(() => {
+    if(contract) {
+      fetchDonators();
+    }
+  }, [contract, address]);
+
   // if(isLoading) return (<h1>Loading...</h1>);
   const handleDonate = async () => {
-
+    setIsLoading(true);
+    await donate(state.pId, amount);
+    setIsLoading(false);
   }
 
   return (
@@ -100,8 +116,18 @@ const CampaignDetails = () => {
             </h4>
             <div className="mt-[20px] flex flex-col gap-4">
               {donators.length > 0 ? (
-                donators.map((donator, index) => (
-                  <div key={index}>Donations</div>
+                donators.map((item, index) => (
+                  <div
+                    key={index}
+                    className="flex justify-between items-center gap-4"
+                  >
+                    <p className="font-epilogue font-normal text-[16px] text-[#b2b3bd] leading-[26px] break-all">
+                      {index + 1}. {item.donator}
+                    </p>
+                    <p className="font-epilogue font-normal text-[16px] text-[#b2b3bd] leading-[26px] break-all">
+                      {item.donation}
+                    </p>
+                  </div>
                 ))
               ) : (
                 <p className="font-epilogue font-normal text-[16] text-[#808191] leading-[26px] text-justify">
@@ -128,11 +154,21 @@ const CampaignDetails = () => {
                 value={amount}
                 onChange={(e) => setAmount(e.target.value)}
               />
-              <div className="my-[20px] p-4 bg-[#13131a] rounded-[10px]" >
-                <h4 className="font-epilogue font-semibold text-[14px] leading-[22px] text-white">Back it because you belive in it.</h4>
-                <p className="mt-[20px] font-epilogue font-normal leading-[22px] text-[#808191]">Support the project for no reward, just becuase it speaks to you.</p>
+              <div className="my-[20px] p-4 bg-[#13131a] rounded-[10px]">
+                <h4 className="font-epilogue font-semibold text-[14px] leading-[22px] text-white">
+                  Back it because you belive in it.
+                </h4>
+                <p className="mt-[20px] font-epilogue font-normal leading-[22px] text-[#808191]">
+                  Support the project for no reward, just becuase it speaks to
+                  you.
+                </p>
               </div>
-              <CustomButton btnType="button" title="Fund Campaign" styles="w-full bg-[#8c6dfd]" handleClick={handleDonate}  />
+              <CustomButton
+                btnType="button"
+                title="Fund Campaign"
+                styles="w-full bg-[#8c6dfd]"
+                handleClick={handleDonate}
+              />
             </div>
           </div>
         </div>
